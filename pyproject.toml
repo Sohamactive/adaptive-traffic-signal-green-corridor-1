@@ -7,12 +7,13 @@ requires-python = ">=3.13"
 dependencies = [
     # Computer vision — use headless build (no X11 GUI libs) inside container
     "opencv-python-headless>=4.10",
-    # YOLOv8 — torch/torchvision are pinned below to CPU-only builds so that
+    # YOLOv8 — torch/torchvision are pinned to CPU-only builds so that
     # `uv sync` in GitHub Codespaces (no GPU) does not pull nvidia-*-cu12 wheels.
-    # See uv.toml for the matching pytorch-cpu index declaration.
-    # To switch to a CUDA build, remove the +cpu pins here and in uv.toml.
-    "torch==2.5.1+cpu",
-    "torchvision==0.20.1+cpu",
+    # The pytorch-cpu index is declared in uv.toml; [tool.uv.sources] below
+    # routes these two packages there. To switch to CUDA, remove the +cpu pins
+    # and the sources entries, then update the index URL in uv.toml.
+    "torch==2.6.0+cpu",
+    "torchvision==0.21.0+cpu",
     "ultralytics>=8.3",
     # Arduino / serial hardware interface
     "pyserial>=3.5",
@@ -29,11 +30,17 @@ prediction = [
     "xgboost>=2.0",
 ]
 
-# Route torch/torchvision to the CPU-only PyTorch wheel index so that uv
-# never resolves the CUDA/nvidia variants in GPU-less environments like Codespaces.
+[tool.hatch.build.targets.wheel]
+packages = ["control", "detection", "gui"]
+
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
 torchvision = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url  = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.ruff]
 line-length = 100

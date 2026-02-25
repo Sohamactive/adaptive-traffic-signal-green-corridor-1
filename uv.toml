@@ -9,18 +9,20 @@
 # How it works:
 #   * We declare the official PyTorch CPU-only index below with `explicit = true`.
 #     That flag means uv will ONLY look at this index for packages that explicitly
-#     reference it (via [tool.uv.sources] in pyproject.toml), leaving all other
-#     packages to resolve from PyPI as usual.
-#   * `pyproject.toml` pins torch==2.5.1+cpu and torchvision==0.20.1+cpu and
-#     points them at the "pytorch-cpu" index through [tool.uv.sources].
+#     reference it (via [sources] below), leaving all other packages on PyPI.
+#   * `pyproject.toml` pins torch==2.6.0+cpu and torchvision==0.21.0+cpu;
+#     the [sources] table here routes them to the pytorch-cpu index.
 #
 # To switch to a CUDA build:
 #   1. Remove or update the +cpu pins in pyproject.toml dependencies.
-#   2. Remove the torch/torchvision entries from [tool.uv.sources] in pyproject.toml.
+#   2. Remove the torch/torchvision entries from [sources] below.
 #   3. Replace this index URL with the matching CUDA index, e.g.:
 #      https://download.pytorch.org/whl/cu121
 
-[[index]]
-name = "pytorch-cpu"
-url  = "https://download.pytorch.org/whl/cpu"
-explicit = true
+# Route torch/torchvision to the CPU-only wheel index. Using [sources] and
+# [[index]] here (rather than in pyproject.toml) avoids the "Found both a
+# uv.toml and [tool.uv]" conflict warning.
+# Index and sources configuration lives in pyproject.toml under
+# [[tool.uv.index]] and [tool.uv.sources] — uv.toml does not support
+# [sources], and having [[index]] here shadows the pyproject.toml entry,
+# which breaks the sources lookup.

@@ -50,8 +50,8 @@
     "8000": { "label": "HTTP server",       "onAutoForward": "silent" }
   },
 
-  // After the container is created, install the project with uv
-  "postCreateCommand": "uv sync",
+  // Sync to catch any changes made after the image was built (fast no-op when image is fresh)
+  "postCreateCommand": "uv sync --frozen",
 
   // Keep the venv directory inside the workspace so VS Code can find it
   "remoteEnv": {
