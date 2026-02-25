@@ -10,6 +10,7 @@ wheels/
 .venv
 
 # Data files (don't commit large datasets)
+data/*
 data/*.mp4
 data/*.avi
 data/*.mov
