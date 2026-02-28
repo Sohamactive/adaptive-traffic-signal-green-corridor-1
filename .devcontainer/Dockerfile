@@ -29,7 +29,7 @@ WORKDIR /workspace
 # Install dependencies first (separate layer for better cache reuse).
 # Only these files are needed for dependency resolution; source changes
 # will not bust this layer.
-COPY pyproject.toml uv.toml uv.lock* ./
+COPY pyproject.toml uv.lock* ./
 RUN uv sync --frozen --no-install-project 2>/dev/null || uv sync --no-install-project
 
 # Copy the rest of the source and install the project itself

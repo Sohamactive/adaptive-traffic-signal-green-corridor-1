@@ -13,7 +13,7 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspace/adaptive-traffic-signal-green-corridor/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
         "editor.formatOnSave": true,
         "[python]": {
@@ -55,7 +55,7 @@
 
   // Keep the venv directory inside the workspace so VS Code can find it
   "remoteEnv": {
-    "UV_PROJECT_ENVIRONMENT": "/workspace/.venv"
+    "UV_PROJECT_ENVIRONMENT": "/workspace/adaptive-traffic-signal-green-corridor/.venv"
   },
 
   "remoteUser": "root"

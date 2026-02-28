@@ -13,6 +13,7 @@ dependencies = [
     "numpy>=2.0",
     "pyyaml>=6.0",
     "kaggle>=2.0.0",
+    "tk>=0.1.0",
 ]
 
 [project.optional-dependencies]
