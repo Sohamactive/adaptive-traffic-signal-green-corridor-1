@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #222;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 10px; }
+        a { color: #4fc3f7; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .upload-box {
+            margin: 30px auto;
+            padding: 30px;
+            border: 2px dashed #555;
+            border-radius: 12px;
+            max-width: 500px;
+            background: #2a2a2a;
+        }
+        .upload-box input[type="file"] {
+            margin: 15px 0;
+            color: #ccc;
+        }
+        .upload-box button {
+            padding: 10px 30px;
+            font-size: 16px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .upload-box button:hover { background: #388e3c; }
+        .result-section {
+            margin-top: 30px;
+        }
+        .result-section img {
+            border: 5px solid #444;
+            border-radius: 10px;
+            max-width: 90%;
+            height: auto;
+        }
+        .vehicle-count {
+            font-size: 1.5em;
+            margin: 15px 0;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚦 Adaptive Traffic System - Image Test</h1>
+    <p><a href="/">← Back to Live Feed</a></p>
+
+    <div class="upload-box">
+        <form method="POST" enctype="multipart/form-data">
+            <p>Upload a traffic image to run detection</p>
+            <input type="file" name="image" accept="image/*" required><br>
+            <button type="submit">Detect Vehicles</button>
+        </form>
+    </div>
+
+    {% if result_image %}
+    <div class="result-section">
+        <p class="vehicle-count">Vehicles Detected: {{ vehicle_count }}</p>
+        <img src="data:image/jpeg;base64,{{ result_image }}" alt="Detection Result">
+    </div>
+    {% endif %}
+</body>
+</html>

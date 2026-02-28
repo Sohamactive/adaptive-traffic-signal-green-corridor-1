@@ -1,6 +1,10 @@
-"""Detection module for YOLO inference, tracking, and vehicle counting."""
+"""Vehicle detection subsystem.
 
-from detection.lane_scanner import LaneScanner, LaneScanResult
-from detection.vehicalCount import VehicleCounter
+Exposes the main detector class and supporting utilities so that other
+subsystems (GUI, prediction, optimization) can consume detection results
+through a clean interface without depending on YOLO or OpenCV directly.
+"""
 
-__all__ = ["VehicleCounter", "LaneScanner", "LaneScanResult"]
+from detection.vehicle_detector import DetectionResult, VehicleDetector
+
+__all__ = ["VehicleDetector", "DetectionResult"]
