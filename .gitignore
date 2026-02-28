@@ -19,6 +19,7 @@ data/datasets/
 *.weights
 *.pt
 !yolov8n.pt
+.github
 
 # Logs
 *.log
