@@ -53,7 +53,7 @@ def create_app() -> Flask:
                 img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
                 # Run detection
-                result = detector.detect(img)
+                result = detector.detect(img) #type: ignore
                 annotated = detector.draw_vehicle_count(
                     result.annotated_frame, result.vehicle_count
                 )
