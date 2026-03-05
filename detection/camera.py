@@ -30,11 +30,22 @@ class CameraStream:
         self._cap: cv2.VideoCapture | None = None
 
     def open(self) -> None:
-        """Open (or re-open) the underlying capture device."""
+        """Open (or re-open) the underlying capture device.
+
+        Raises:
+            RuntimeError: If the camera source could not be opened (e.g. no
+                          physical camera is present in the current environment).
+        """
         if self._cap is not None:
             self._cap.release()
         self._cap = cv2.VideoCapture(self._source)
         self._cap.set(cv2.CAP_PROP_BUFFERSIZE, self._buffer_size)
+        if not self._cap.isOpened():
+            self._cap = None
+            raise RuntimeError(
+                f"Could not open camera source {self._source!r}. "
+                "No camera device is available in this environment."
+            )
 
     def read(self) -> tuple[bool, np.ndarray]:
         """Read a single frame, delegating to the underlying ``VideoCapture``."""
@@ -48,6 +59,17 @@ class CameraStream:
         if self._cap is not None:
             self._cap.release()
             self._cap = None
+
+
+def _make_placeholder_frame(message: str = "No camera") -> np.ndarray:
+    """Return a dark 640×480 frame with *message* centred on it."""
+    frame = np.zeros((480, 640, 3), dtype=np.uint8)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    (text_w, text_h), _ = cv2.getTextSize(message, font, 0.8, 2)
+    x = (640 - text_w) // 2
+    y = (480 + text_h) // 2
+    cv2.putText(frame, message, (x, y), font, 0.8, (80, 80, 80), 2)
+    return frame
 
 
 def generate_annotated_stream(
@@ -73,14 +95,35 @@ def generate_annotated_stream(
     """
     if camera is None:
         camera = CameraStream()
-        camera.open()
+        try:
+            camera.open()
+        except RuntimeError:
+            # No physical camera — stream placeholder frames indefinitely
+            while True:
+                placeholder = _make_placeholder_frame("No camera feed available")
+                _, buffer = cv2.imencode(".jpg", placeholder)
+                yield (
+                    b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n\r\n" + buffer.tobytes() + b"\r\n"
+                )
+                time.sleep(1.0)
+            return
 
     last_inference_time: float = 0
 
     while True:
         success, frame = camera.read()
         if not success:
-            break
+            # Camera read failed — yield a static placeholder and keep looping
+            # so the browser stream stays alive rather than hanging.
+            placeholder = _make_placeholder_frame("No camera feed available")
+            _, buffer = cv2.imencode(".jpg", placeholder)
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n" + buffer.tobytes() + b"\r\n"
+            )
+            time.sleep(1.0)
+            continue
 
         current_time = time.time()
 
